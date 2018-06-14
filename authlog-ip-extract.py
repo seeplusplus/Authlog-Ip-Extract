@@ -38,11 +38,11 @@ def BuildLogFromFile(file_name):
 
 def PrintReport(log_list):
     report_str = "" 
-    for status in {l._log_status for l in log_list}: # for each unique status
-        for user in {l._log_user for l in log_list}: # for each unique user
+    for status in sorted({l._log_status for l in log_list}): # for each unique status
+        for user in sorted({l._log_user for l in log_list}): # for each unique user
             report_str += f"{status} from {user}\n"
             user_status_ip_sum = {}
-            for ip in {l._log_ip for l in log_list}: # for each unique ip
+            for ip in sorted({l._log_ip for l in log_list}): # for each unique ip
                 user_status_ip_sum[ip] = sum(1 for l in log_list if l._log_status == status and l._log_user == user and l._log_ip == ip)
                 if user_status_ip_sum[ip]:
                     report_str += f"\t{user_status_ip_sum[ip]} from {ip}\n"
