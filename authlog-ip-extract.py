@@ -33,7 +33,7 @@ def build_log_from_file(file_name):
     log_entries = [] 
 
     for line in file:
-        temp = LogEntry.BuildEntry(line)
+        temp = LogEntry.build_entry(line)
         if temp is not None:
             log_entries.append(temp)
     return log_entries
