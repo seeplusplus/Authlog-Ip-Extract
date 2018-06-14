@@ -1,0 +1,37 @@
+#!/bin/bash
+
+program=$0
+
+usage() {
+    echo "usage: $program /path/to/auth.log"
+    echo "      /path/to/auth.log    auth.log file for $program to analyze"
+    exit  
+}
+
+if [ -z $1 ]
+    then
+        usage;
+        return
+fi
+
+skimlog () {
+    log=$1
+    accepted="[Aa]ccept"
+    failed="[Ff]ail"
+    # regex pattern only works for usernames containing only a-z and A-Z, needs to be fixed
+    regex="[a-zA-Z]+ from ([0-9]{1,3}\.){1,3}[0-9]{1,3}"
+
+    while read line; do 
+        if [[ $line =~ $regex ]]; then
+            ip_match="${BASH_REMATCH}"
+            # echo "$ip_match"
+            if [[ $line =~ $accepted ]]; then
+                echo "Accepted: " $ip_match
+            elif [[ $line =~ $failed ]]; then
+                echo "Failed: " $ip_match
+            fi
+        fi
+    done < $log
+}
+
+skimlog $1 | sort | uniq -c 
