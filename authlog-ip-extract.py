@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
 import re
+from os.path import isfile
 import sys
 from datetime import datetime as dt
-
-log_file = ""
-if len(sys.argv) <= 1:
-    print("USAGE: authlog-ip-extract /path/to/auth.log")
-else:
-    log_file = sys.argv[1]
 
 
 class LogEntry:
@@ -34,14 +29,12 @@ class LogEntry:
 
 
 def build_log_from_file(file_name):
-    file = open(file_name, 'r')
-
-    log_entries = [] 
-
-    for line in file:
-        temp = LogEntry.build_entry(line)
-        if temp is not None:
-            log_entries.append(temp)
+    log_entries = []
+    with open(file_name, 'r') as file:
+        for line in file:
+            temp = LogEntry.build_entry(line)
+            if temp is not None:
+                log_entries.append(temp)
     return log_entries
 
 
@@ -66,6 +59,13 @@ def print_report(log_list):
             report_str += f"Total {sum(user_status_ip_sum.values())}\n"
     print(report_str)
 
+
+log_file = ""
+if len(sys.argv) <= 1 or not (isfile(sys.argv[1])):
+    print("USAGE: authlog-ip-extract /path/to/auth.log")
+    sys.exit(-1)
+else:
+    log_file = sys.argv[1]
 
 log_list = build_log_from_file(log_file)
 print_report(log_list)
